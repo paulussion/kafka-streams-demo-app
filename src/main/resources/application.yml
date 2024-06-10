@@ -1,0 +1,59 @@
+spring:
+  sql:
+    init:
+      mode: always
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  kafka:
+    bootstrap-servers:
+      - http://localhost:9092
+    properties:
+      schema.registry.url: http://localhost:8081
+
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+
+    consumer:
+      group-id: demo-app-consumers
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      properties:
+        specific.avro.reader: true
+
+    streams:
+      application-id: demo-app
+      bootstrap-servers:
+        - http://localhost:9092
+      properties:
+        processing.guarantee: exactly_once_v2
+        default.key.serde: "org.apache.kafka.common.serialization.Serdes$StringSerde"
+        default.value.serde: "io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde"
+        schema.registry.url: http://localhost:8081
+
+  threads:
+    virtual:
+      enabled: true
+
+kafka-connector-settings:
+  url: http://localhost:8099
+  db:
+    user: postgres
+    password: postgres
+    host: postgres
+    name: postgres
+  instant-payment-metrics-connector:
+    topic: instant-payment-metrics
+    name: instant-payment-metrics-jdbc-sink-v0.1
+
+logging:
+  level:
+    root: info
+    com.bforbank: debug
+    org.apache.kafka: warn
+    io.confluent.kafka: warn

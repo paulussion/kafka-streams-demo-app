@@ -1,0 +1,8 @@
+target/
+.*
+!.gitignore
+!.gitlab-ci.yml
+*.iml
+infrastructure/db/*
+!*.gitlab-ci.yml
+!.gitlab-ci.*.yml

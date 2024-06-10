@@ -1,0 +1,28 @@
+@namespace("com.bforbank.demo")
+protocol BusinessMetricProtocol {
+
+	import idl "./common.avdl";
+
+	enum TransactionType {
+		UNKNOWN,
+		SEPA_TRANSFER,
+		INSTANT_PAYMENT_TRANSFER,
+		CARD_PAYMENT,
+		DEBIT,
+		CHECK
+	} = UNKNOWN;
+
+	record Transaction {
+		string customerId;
+		TransactionType type;
+		string label;
+		Amount amount;
+		timestamp_ms timestamp;
+	}
+
+	record InstantPaymentMetric {
+		string customerId;
+		long nbOfInstantPayment;
+		timestamp_ms lastPaymentTimestamp;
+	}
+}

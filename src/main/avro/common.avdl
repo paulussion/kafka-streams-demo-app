@@ -1,0 +1,9 @@
+@namespace("com.bforbank.demo")
+protocol CommonProtocol {
+
+	record Amount {
+		@java-class("java.math.BigDecimal")
+		string value;
+		string currency;
+	}
+}

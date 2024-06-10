@@ -1,0 +1,47 @@
+@namespace("com.bforbank.demo")
+protocol MaterializedViewProtocol {
+
+	import idl "./common.avdl";
+
+	enum AccountType {
+		CSL,
+		LDDS,
+		LIVRET_A,
+		CTO,
+		PEA,
+		PEA_PME,
+		CURRENT_ACCOUNT,
+		UNKNOWN
+	} = UNKNOWN;
+
+	enum AccountStatus {
+		AWAITING_FIRST_PAYMENT,
+		ACTIVE,
+		CLOSED,
+		UNKNOWN
+	} = UNKNOWN;
+
+	record Account {
+		AccountType type;
+		string accountId;
+		Amount balance;
+		AccountStatus status;
+	}
+
+	record Customer {
+		string id;
+		string firstName;
+		string lastName;
+	}
+
+	record AccountAggregation {
+		array<Account> accounts = [];
+	}
+
+	record CustomerWithAccounts {
+		string id;
+		string firstName;
+		string lastName;
+		array<Account> accounts = [];
+	}
+}
