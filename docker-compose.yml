@@ -56,50 +56,6 @@ services:
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'broker:29092'
       SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
 
-  postgres:
-    image: postgres:14.3-alpine
-    platform: linux/arm64/v8
-    hostname: postgres
-    container_name: postgres
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-    ports:
-      - '5432:5432'
-
-  kafka-connect:
-    image: ghcr.io/arm64-compat/confluentinc/cp-kafka-connect:7.1.1-arm64
-    container_name: kafka-connect
-    depends_on:
-      - zookeeper
-      - broker
-      - postgres
-    ports:
-      - "8099:8083"
-    environment:
-      CONNECT_GROUP_ID: 1
-      CONNECT_CONFIG_STORAGE_TOPIC: my-connect-configs
-      CONNECT_OFFSET_STORAGE_TOPIC: my-connect-offsets
-      CONNECT_STATUS_STORAGE_TOPIC: my-connect-status
-      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1
-      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
-      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
-      CONNECT_BOOTSTRAP_SERVERS: broker:29092
-      CONNECT_KEY_CONVERTER: io.confluent.connect.avro.AvroConverter
-      CONNECT_VALUE_CONVERTER: io.confluent.connect.avro.AvroConverter
-      CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: http://schema-registry:8081
-      CONNECT_KEY_CONVERTER_SCHEMA_REGISTRY_URL: http://schema-registry:8081
-      CONNECT_PLUGIN_PATH: /usr/share/confluent-hub-components
-      CONNECT_JDBC_DRIVERS: /usr/share/confluent-hub-components/confluentinc-kafka-connect-jdbc/lib/
-      CONNECT_REST_ADVERTISED_HOST_NAME: localhost
-    command:
-      - bash
-      - -c
-      - |
-        confluent-hub install --no-prompt confluentinc/kafka-connect-jdbc:10.5.0
-        cp /usr/share/confluent-hub-components/confluentinc-kafka-connect-jdbc/lib/postgresql-42.3.3.jar /usr/share/confluent-hub-components
-        /etc/confluent/docker/run
-
   akhq:
     image: tchiotludo/akhq
     depends_on:
