@@ -64,7 +64,7 @@ public class FakeCustomerAndAccountsController {
 
     @PostMapping("/fake-customers")
     public ResponseEntity<Void> generateFakeCustomers() throws InterruptedException {
-        customers = IntStream.range(0, 10).mapToObj(_ -> UUID.randomUUID().toString()).toList();
+        customers = IntStream.range(0, 10).mapToObj(_ -> FAKER.business().securityCode()).toList();
         for (String customerId : customers) {
             FakeCustomer fakeCustomer = new FakeCustomer(customerId);
             kafkaProducers.publishCustomer(customerId, fakeCustomer.toAvro());
@@ -76,7 +76,7 @@ public class FakeCustomerAndAccountsController {
 
     @PostMapping("/fake-accounts")
     public ResponseEntity<Void> generateFakeAccounts() throws InterruptedException {
-        List<String> accounts = IntStream.range(0, 10).mapToObj(_ -> UUID.randomUUID().toString()).toList();
+        List<String> accounts = IntStream.range(0, 10).mapToObj(_ -> FAKER.business().securityCode()).toList();
         for (int i = 0; i < accounts.size(); i++) {
             var accountId = accounts.get(i);
             var accountType = i % 2 == 0 ? AccountType.CURRENT_ACCOUNT : randomAccountType();

@@ -28,7 +28,7 @@ public class BusinessMetricsTopologyBuilder {
         // On stream les évènements du topic "Source" : "transaction"
         builder.stream(transactionsTopicName, consumedAsAvroTransactions())
                 // on filtre les transactions qui ne sont pas des instant payment
-                .filter((_, v) -> v.getType() == TransactionType.INSTANT_PAYMENT_TRANSFER, Named.as("filter-not-instant-payment"))
+                .filter((_, v) -> TransactionType.INSTANT_PAYMENT_TRANSFER == v.getType(), Named.as("filter-not-instant-payment"))
                 // on regroupe les transaction par identifiant du compte
                 .groupByKey()
                 // on aggrège les transactions pour construire notre métrique

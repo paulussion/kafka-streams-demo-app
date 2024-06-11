@@ -60,8 +60,8 @@ public class FakeTransactionsController {
             List<String> customerIds = new ArrayList<>();
             List<String> accountIds = new ArrayList<>();
             for (int i = 0; i < nbOfCustomers; i++) {
-                customerIds.add(UUID.randomUUID().toString());
-                accountIds.add(UUID.randomUUID().toString());
+                customerIds.add(FAKER.business().securityCode());
+                accountIds.add(FAKER.business().securityCode());
             }
             for (int i = 0; i < nbOfTransactions; i++) {
                 int randomIndex = RANDOM.nextInt(nbOfCustomers);

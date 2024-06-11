@@ -37,10 +37,10 @@ public class KafkaStreamTopology {
 
         // materializedViewTopologyBuilder.buildCustomerWithAccountsTopology(builder);
 
-        //KStream<String, CardOrderReply> cardOrderReplyKStream =
+        // KStream<String, CardOrderReply> cardOrderReplyKStream =
         //        businessLogicTopologyBuilder.buildCardCommandLogicTopology(builder);
 
-        //schedulerTopologyBuilder.buildErrorHandlingSchedulerTopology(builder, cardOrderReplyKStream);
+        // schedulerTopologyBuilder.buildErrorHandlingSchedulerTopology(builder, cardOrderReplyKStream);
 
         Topology topology = builder.build();
         log.debug("Here is my topology definition :\n{}", topology.describe().toString());

@@ -44,7 +44,7 @@ public class RetryCommandProcessor implements Processor<String, RetryCommand, St
     public void process(Record<String, RetryCommand> record) {
         CardOrder toRetry = record.value().getToRetry();
         RetryAggregate existingRetryAggregate = retryAggregateStore.get(toRetry.getRequestId());
-        if (existingRetryAggregate == null) {
+        if (null == existingRetryAggregate) {
             retryAggregateStore.put(toRetry.getRequestId(), new RetryAggregate(toRetry, record.key()));
         }
     }
