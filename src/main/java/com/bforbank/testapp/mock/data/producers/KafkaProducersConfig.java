@@ -1,9 +1,7 @@
 package com.bforbank.testapp.mock.data.producers;
 
 import com.bforbank.demo.Account;
-import com.bforbank.demo.CardOrderReply;
 import com.bforbank.demo.Customer;
-import com.bforbank.demo.Transaction;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -25,12 +23,6 @@ public class KafkaProducersConfig {
     }
 
     @Bean
-    public KafkaTemplate<String, Transaction> kafkaTemplateTransaction() {
-        Map<String, Object> props = getStringKeyAvroValueConfig();
-        return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(props));
-    }
-
-    @Bean
     public KafkaTemplate<String, Customer> kafkaTemplateCustomer() {
         Map<String, Object> props = getStringKeyAvroValueConfig();
         return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(props));
@@ -38,12 +30,6 @@ public class KafkaProducersConfig {
 
     @Bean
     public KafkaTemplate<String, Account> kafkaTemplateAccount() {
-        Map<String, Object> props = getStringKeyAvroValueConfig();
-        return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(props));
-    }
-
-    @Bean
-    public KafkaTemplate<String, CardOrderReply> kafkaTemplateCardOrderReply() {
         Map<String, Object> props = getStringKeyAvroValueConfig();
         return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(props));
     }

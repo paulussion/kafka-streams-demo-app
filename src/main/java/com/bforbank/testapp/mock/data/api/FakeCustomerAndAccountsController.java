@@ -41,7 +41,7 @@ public class FakeCustomerAndAccountsController {
     public record FakeAccount(String accountId, AccountType accountType) {
 
         Account toAvro() {
-            Amount amount = new Amount(new BigDecimal(FAKER.commerce().price()), FAKER.money().currencyCode());
+            Amount amount = new Amount(new BigDecimal(FAKER.commerce().price()), "EUR");
             return Account.newBuilder()
                     .setAccountId(accountId)
                     .setBalance(amount)

@@ -21,18 +21,10 @@ import static org.apache.kafka.streams.StreamsConfig.DEFAULT_DESERIALIZATION_EXC
  */
 @Component
 public record AppSerdes(
-        Serde<Transaction> transactionSerde,
-        Serde<InstantPaymentMetric> statisticSerde,
         Serde<Customer> customerSerde,
         Serde<Account> accountSerde,
         Serde<AccountAggregation> accountAggregationSerde,
-        Serde<CustomerWithAccounts> customerWithAccountsSerde,
-        Serde<CardAggregate> cardAggregateSerde,
-        Serde<CardOrder> cardOrderSerde,
-        Serde<CardOrderReply> cardOrderReplySerde,
-        Serde<Card> cardSerde,
-        Serde<RetryCommand> retryCommandSerde,
-        Serde<RetryAggregate> retryAggregateSerde
+        Serde<CustomerWithAccounts> customerWithAccountsSerde
 ) {
     /**
      * Constructor that initializes Serde instances for all needed classes
@@ -43,14 +35,6 @@ public record AppSerdes(
     @Autowired
     public AppSerdes(final KafkaProperties kafkaProperties) {
         this(
-                SerdeFactory.ofValue(buildSerdePropertyMap(kafkaProperties)),
-                SerdeFactory.ofValue(buildSerdePropertyMap(kafkaProperties)),
-                SerdeFactory.ofValue(buildSerdePropertyMap(kafkaProperties)),
-                SerdeFactory.ofValue(buildSerdePropertyMap(kafkaProperties)),
-                SerdeFactory.ofValue(buildSerdePropertyMap(kafkaProperties)),
-                SerdeFactory.ofValue(buildSerdePropertyMap(kafkaProperties)),
-                SerdeFactory.ofValue(buildSerdePropertyMap(kafkaProperties)),
-                SerdeFactory.ofValue(buildSerdePropertyMap(kafkaProperties)),
                 SerdeFactory.ofValue(buildSerdePropertyMap(kafkaProperties)),
                 SerdeFactory.ofValue(buildSerdePropertyMap(kafkaProperties)),
                 SerdeFactory.ofValue(buildSerdePropertyMap(kafkaProperties)),
