@@ -21,6 +21,8 @@ protocol MaterializedViewProtocol {
 		UNKNOWN
 	} = UNKNOWN;
 
+	// INPUTS
+
 	record Account {
 		AccountType type;
 		string accountId;
@@ -34,9 +36,13 @@ protocol MaterializedViewProtocol {
 		string lastName;
 	}
 
+	// STATE
+
 	record AccountAggregation {
 		array<Account> accounts = [];
 	}
+
+	// OUTPUT
 
 	record CustomerWithAccounts {
 		string id;

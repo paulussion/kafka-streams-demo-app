@@ -1,7 +1,36 @@
 # see https://github.com/ghcr.io/arm64-compat/confluentinc/cp-all-in-one/blob/7.0.1-post/cp-all-in-one/docker-compose.yml
 ---
 version: '3.8'
+volumes:
+  mongodbdata:
+    driver: local
 services:
+  mongo:
+    image: mongo:latest
+    hostname: mongo
+    container_name: mongo
+    command: mongod --auth
+    environment:
+      MONGO_INITDB_DATABASE: my_db
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: root
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongodbdata:/data/db
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+
+  mongo-express:
+    image: mongo-express:latest
+    restart: always
+    ports:
+      - 8091:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: root
+      ME_CONFIG_MONGODB_URL: mongodb://admin:root@mongo:27017/
+      ME_CONFIG_BASICAUTH: false
+
   zookeeper:
     image: ghcr.io/arm64-compat/confluentinc/cp-zookeeper:7.1.1-arm64
     hostname: zookeeper
@@ -56,6 +85,36 @@ services:
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'broker:29092'
       SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
 
+  kafka-connect:
+    image: ghcr.io/arm64-compat/confluentinc/cp-kafka-connect:7.1.1-arm64
+    container_name: kafka-connect
+    depends_on:
+      - zookeeper
+      - broker
+      - mongo
+    ports:
+      - "8099:8083"
+    environment:
+      CONNECT_GROUP_ID: 1
+      CONNECT_CONFIG_STORAGE_TOPIC: my-connect-configs
+      CONNECT_OFFSET_STORAGE_TOPIC: my-connect-offsets
+      CONNECT_STATUS_STORAGE_TOPIC: my-connect-status
+      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_BOOTSTRAP_SERVERS: broker:29092
+      CONNECT_KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
+      CONNECT_VALUE_CONVERTER: io.confluent.connect.avro.AvroConverter
+      CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: http://schema-registry:8081
+      CONNECT_PLUGIN_PATH: "/usr/share/java,/usr/share/confluent-hub-components"
+      CONNECT_REST_ADVERTISED_HOST_NAME: localhost
+    command:
+      - bash
+      - -c
+      - |
+        confluent-hub install --no-prompt mongodb/kafka-connect-mongodb:1.13.0
+        /etc/confluent/docker/run
+
   akhq:
     image: tchiotludo/akhq
     depends_on:
@@ -91,15 +150,9 @@ services:
     # See https://docs.docker.com/compose/startup-order/
     command: "bash -c 'echo Waiting for Kafka to be ready... && \
                        cub kafka-ready -b broker:29092 1 20 && \
-                       kafka-topics --create --topic transactions --if-not-exists --bootstrap-server broker:29092 --partitions 1 --replication-factor 1 && \  
-                       kafka-topics --create --topic instant-payment-metrics --if-not-exists --bootstrap-server broker:29092 --partitions 1 --replication-factor 1 && \ 
                        kafka-topics --create --topic accounts --if-not-exists --bootstrap-server broker:29092 --partitions 1 --replication-factor 1 && \ 
                        kafka-topics --create --topic customers --if-not-exists --bootstrap-server broker:29092 --partitions 1 --replication-factor 1 && \ 
                        kafka-topics --create --topic customers-with-accounts --if-not-exists --bootstrap-server broker:29092 --partitions 1 --replication-factor 1 && \ 
-                       kafka-topics --create --topic card-orders --if-not-exists --bootstrap-server broker:29092 --partitions 1 --replication-factor 1 && \ 
-                       kafka-topics --create --topic card-orders-reply --if-not-exists --bootstrap-server broker:29092 --partitions 1 --replication-factor 1 && \ 
-                       kafka-topics --create --topic cards --if-not-exists --bootstrap-server broker:29092 --partitions 1 --replication-factor 1 && \ 
-                       kafka-topics --create --topic retry-commands --if-not-exists --bootstrap-server broker:29092 --partitions 1 --replication-factor 1 && \ 
                        sleep infinity'"
     environment:
       # The following settings are listed here only to satisfy the image's requirements.

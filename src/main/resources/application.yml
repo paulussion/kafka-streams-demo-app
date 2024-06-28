@@ -1,4 +1,13 @@
 spring:
+  data:
+    mongodb:
+      username: test
+      password: test
+      host: localhost
+      port: 27017
+      database: my_db
+
+
   kafka:
     bootstrap-servers:
       - http://localhost:9092

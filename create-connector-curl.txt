@@ -1,0 +1,1 @@
+curl -X POST -H "Content-Type: application/json" -d @sink.json http://localhost:8099/connectors -w "\n"
