@@ -5,6 +5,6 @@
     "topics": "customers-with-accounts",
     "connection.uri": "mongodb://admin:root@mongo:27017",
     "database": "my_db",
-    "collection": "accounts"
+    "collection": "customers"
   }
 }
